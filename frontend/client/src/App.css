@@ -1,0 +1,84 @@
+/* App.css */
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+form div {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input[type="email"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: blue !important;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3 !important;
+}
+
+/* Custom styles for react-select */
+.custom-select {
+  margin-top: 10px;
+}
+
+.custom-select__control {
+  border: 1px solid #ccc !important;
+  border-radius: 4px !important;
+  padding: 2px !important;
+  min-height: 38px !important;
+}
+
+.custom-select__value-container {
+  padding: 0 8px !important;
+}
+
+.custom-select__indicator-separator {
+  display: none;
+}
+
+.custom-select__multi-value {
+  background-color: #007bff !important;
+  color: white !important;
+}
+
+.custom-select__multi-value__label {
+  color: white !important;
+}
+
+.custom-select__multi-value__remove {
+  color: white !important;
+  cursor: pointer;
+}
+
+.custom-select__multi-value__remove:hover {
+  background-color: #0056b3 !important;
+}
