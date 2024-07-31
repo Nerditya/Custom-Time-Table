@@ -11,7 +11,7 @@ const { CLIENT_RENEG_LIMIT } = require('tls');
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
-dotenv.config(;)
+dotenv.config();
 const limiter = rateLimit({
     windowMs: 24 * 60 * 60 * 1000, // 24 hours
     max: 5, // limit each IP to 5 requests per windowMs
