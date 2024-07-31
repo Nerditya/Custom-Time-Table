@@ -208,7 +208,7 @@ function App() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3001/submit', {
+      const response = await axios.post('https://custom-time-table-backend.vercel.app/submit', {
         email,
         courseCodes: selectedCourses.map(course => course.value).join(',')
       });

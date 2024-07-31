@@ -7,10 +7,11 @@ const ExcelJS = require('exceljs');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
 const dotenv = require('dotenv');
+const { CLIENT_RENEG_LIMIT } = require('tls');
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
-
+dotenv.config(;)
 const limiter = rateLimit({
     windowMs: 24 * 60 * 60 * 1000, // 24 hours
     max: 5, // limit each IP to 5 requests per windowMs
@@ -218,10 +219,12 @@ let hits=0;
 app.post('/submit',limiter, async (req, res) => {
     try {
         console.log("hits- " +hits);
+        
         const { email, courseCodes } = req.body;
         const courseCodesArray = courseCodes.split(',').map(code => code.trim());
 
         const originalFilePath = path.join(__dirname, 'schedule.xlsx');
+        
 
         // Read the Excel file
         const workbook = xlsx.readFile(originalFilePath);
@@ -263,7 +266,7 @@ app.post('/submit',limiter, async (req, res) => {
         xlsx.utils.book_append_sheet(newWorkbook, newSheet, 'Filtered');
 
         // Save the workbook with the processed data
-        const tempFilePath = path.join(__dirname, 'filtered_timetable.xlsx');
+        const tempFilePath = path.join(__dirname,'/tmp', 'filtered_timetable.xlsx');
         xlsx.writeFile(newWorkbook, tempFilePath);
 
         // Use ExcelJS for applying formatting
@@ -303,7 +306,7 @@ app.post('/submit',limiter, async (req, res) => {
 
         // Save the workbook with borders and additional info
         await workbookWithBorders.xlsx.writeFile(tempFilePath);
-
+        // console.log(process.env.EMAIL,process.env.PASSWORD)
         // Send email with attachment
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -329,12 +332,13 @@ app.post('/submit',limiter, async (req, res) => {
         try {
             await transporter.sendMail(mailOptions);
             res.status(200).send('Email sent successfully');
+            hits++;
         } catch (error) {
             res.status(500).send('Error sending email: ' + error.message);
         }
     } catch (error) {
         console.log(error);
-        res.status(500).send('An error occurred');
+        res.status(500).send(`An error occurred ${error}`);
     }
 });
 
