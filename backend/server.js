@@ -278,7 +278,7 @@ app.post('/submit', limiter, async (req, res) => {
         xlsx.utils.book_append_sheet(newWorkbook, newSheet, 'Filtered');
 
         // Save the workbook with the processed data
-        const tempFilePath = path.join(__dirname, '/tmp', 'filtered_timetable.xlsx');
+        const tempFilePath = path.join('/tmp', 'filtered_timetable.xlsx');
         xlsx.writeFile(newWorkbook, tempFilePath);
 
         // Use ExcelJS for applying formatting
