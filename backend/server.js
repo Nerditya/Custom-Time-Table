@@ -7,11 +7,11 @@ const ExcelJS = require('exceljs');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
 const dotenv = require('dotenv');
-const { CLIENT_RENEG_LIMIT } = require('tls');
+dotenv.config();
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
-dotenv.config();
+
 const limiter = rateLimit({
     windowMs: 24 * 60 * 60 * 1000, // 24 hours
     max: 5, // limit each IP to 5 requests per windowMs
@@ -214,17 +214,28 @@ const courses = [
     { value: 'PH614', label: 'Laser Physics (PH614)' },
     { value: 'PH699', label: 'M.SC. PROJECT-I (PH699)' }
 ];
-let hits=0;
 
-app.post('/submit',limiter, async (req, res) => {
+let hits = 0;
+
+const colors = [
+    'FFFFB3BA', 'FFFFDFBA', 'FFFFFFBA', 'FFBAFFC9', 'FFBAE1FF',
+    'FFB3E5FC', 'FFB2DFDB', 'FFC8E6C9', 'FFDCEDC8', 'FFF0F4C3',
+    'FFFFF9C4', 'FFFFE0B2', 'FFFFCCBC', 'FFD7CCC8', 'FFCFD8DC'
+];
+
+function getColorForCourse(courseCode) {
+    const hash = courseCode.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    return colors[hash % colors.length];
+}
+
+app.post('/submit', limiter, async (req, res) => {
     try {
-        console.log("hits- " +hits);
-        
+        console.log("hits- " + hits);
+
         const { email, courseCodes } = req.body;
         const courseCodesArray = courseCodes.split(',').map(code => code.trim());
 
         const originalFilePath = path.join(__dirname, 'schedule.xlsx');
-        
 
         // Read the Excel file
         const workbook = xlsx.readFile(originalFilePath);
@@ -258,7 +269,8 @@ app.post('/submit',limiter, async (req, res) => {
         const nonEmptyRows = processedData.filter(row => row.some(cell => cell !== ''));
 
         // Remove the last 24 rows
-        const filteredRows = nonEmptyRows.slice(0, -24);
+        let filteredRows = nonEmptyRows.slice(0, -24);
+        filteredRows = filteredRows.slice(2);
 
         // Create a new workbook with the filtered and processed data
         const newSheet = xlsx.utils.aoa_to_sheet(filteredRows);
@@ -266,7 +278,7 @@ app.post('/submit',limiter, async (req, res) => {
         xlsx.utils.book_append_sheet(newWorkbook, newSheet, 'Filtered');
 
         // Save the workbook with the processed data
-        const tempFilePath = path.join('/tmp', 'filtered_timetable.xlsx');
+        const tempFilePath = path.join(__dirname, '/tmp', 'filtered_timetable.xlsx');
         xlsx.writeFile(newWorkbook, tempFilePath);
 
         // Use ExcelJS for applying formatting
@@ -290,6 +302,31 @@ app.post('/submit',limiter, async (req, res) => {
             }
         });
 
+        // Apply colors to matching cells
+        worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
+            row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+                const cellValue = cell.value ? cell.value.toString() : '';
+                const matchingCode = courseCodesArray.find(code => cellValue.includes(code));
+                if (matchingCode) {
+                    cell.fill = {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: getColorForCourse(matchingCode) }
+                    };
+                }
+            });
+        });
+
+        // Set column widths to fit the content
+        worksheet.columns.forEach(column => {
+            let maxLength = 0;
+            column.eachCell({ includeEmpty: true }, cell => {
+                const cellValue = cell.value ? cell.value.toString() : '';
+                maxLength = Math.max(maxLength, cellValue.length);
+            });
+            column.width = maxLength + 2; // Add some padding
+        });
+
         // Filter the courses to include only those with matching course codes
         const matchingCourses = courses.filter(course => courseCodesArray.includes(course.value));
 
@@ -306,7 +343,7 @@ app.post('/submit',limiter, async (req, res) => {
 
         // Save the workbook with borders and additional info
         await workbookWithBorders.xlsx.writeFile(tempFilePath);
-        // console.log(process.env.EMAIL,process.env.PASSWORD)
+
         // Send email with attachment
         const transporter = nodemailer.createTransport({
             service: 'gmail',
