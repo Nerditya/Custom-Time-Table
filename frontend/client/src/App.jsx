@@ -210,9 +210,11 @@ const courses = [
 function App() {
   const [email, setEmail] = useState('');
   const [selectedCourses, setSelectedCourses] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true); // Start loading
     try {
       const response = await axios.post('https://custom-time-table-backend.vercel.app/submit', {
         email,
@@ -221,6 +223,8 @@ function App() {
       alert(response.data);
     } catch (error) {
       console.error('There was an error sending the email!', error);
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -247,8 +251,11 @@ function App() {
             className="custom-select"
           />
         </div>
-        <button type="submit">Submit</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Loading...' : 'Submit'}
+        </button>
       </form>
+      {loading && <div className="spinner"></div>}
     </div>
   );
 }
