@@ -1,89 +1,108 @@
-/* App.css */
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: black; /* Explicitly set the background to white */
-  color: black; /* Explicitly set the text color to black */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
 }
 
-.container {
-  text-align: center;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
-  width: 100%;
-  background-color: white; /* Ensure the container background is white */
-  color: black; /* Ensure the container text color is black */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
-h1 {
-  margin-bottom: 20px;
+[cmdk-list] {
+  min-height: 300px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  transition: 100ms ease;
+  transition-property: height;
 }
 
-form > div {
-  margin-bottom: 15px;
-}
-
-label {
-  display: block;
-  margin-bottom: 5px;
-  text-align: left;
-}
-
-input, .custom-select {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: white; /* Ensure the input background is white */
-  color: black; /* Ensure the input text color is black */
-}
-
-button {
-  padding: 10px 20px;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  border-radius: 4px;
+[cmdk-item] {
   cursor: pointer;
-}
-
-button:disabled {
-  background-color: #999;
-  cursor: not-allowed;
-}
-
-button:hover:not(:disabled) {
-  background-color: #0056b3;
-}
-
-/* .spinner {
-  margin-top: 20px;
-  width: 40px;
-  height: 40px;
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left-color: #007bff;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+  content-visibility: auto;
+  padding: 8px;
+  border-radius: 4px;
+  transition: all 150ms ease;
+  display: flex;
   align-items: center;
-} */
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left-color: #007bff;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+  gap: 8px;
 }
 
+[cmdk-item][aria-selected="true"] {
+  background: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+}
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+[cmdk-group-heading] {
+  padding: 8px;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.85em;
+  font-weight: 500;
+  text-transform: uppercase;
 }
