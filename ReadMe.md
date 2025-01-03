@@ -1,1 +1,1 @@
-This is an app for generating custom time tables
+This is an app for generating custom time tables.
