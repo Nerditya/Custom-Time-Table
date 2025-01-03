@@ -318,7 +318,7 @@ app.post('/submit', limiter, async (req, res) => {
         const { email, courseCodes } = req.body;
         const courseCodesArray = courseCodes.split(',').map(code => code.trim());
 
-        const originalFilePath = path.join(__dirname, 'schedule1.xlsx');
+        const originalFilePath = path.join(__dirname, 'schedule2.xlsx');
 
         // Read the Excel file
         const workbook = xlsx.readFile(originalFilePath);
